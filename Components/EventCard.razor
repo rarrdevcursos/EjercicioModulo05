@@ -1,0 +1,33 @@
+@using admEventEase.Models
+
+@if (Event is null || !Event.IsValid)
+{
+    <p class="event-card-error" role="alert">No se puede mostrar este evento porque sus datos no son válidos.</p>
+}
+else
+{
+    <article class="event-card">
+        <div class="event-card-content">
+            <p class="event-date">@Event.Date.ToString("dd/MM/yyyy · HH:mm")</p>
+            <h2>@Event.Name</h2>
+            <p class="event-location">
+                <span aria-hidden="true">📍</span>
+                @Event.Location
+            </p>
+            @if (!string.IsNullOrWhiteSpace(Event.Description))
+            {
+                <p class="event-description">@Event.Description</p>
+            }
+        </div>
+
+        <div class="event-card-actions">
+            <a class="event-link" href="@($"/events/{Event.Id}")">Ver detalles</a>
+            <a class="event-link event-link-primary" href="@($"/events/{Event.Id}/register")">Registrarme</a>
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter]
+    public EventItem? Event { get; set; }
+}

@@ -1,0 +1,38 @@
+<div class="brand-row">
+    <a class="brand" href="/" aria-label="EventEase, inicio">
+        <span class="brand-mark" aria-hidden="true">e</span>
+        <span>event<span class="brand-accent">ease</span></span>
+    </a>
+    <button class="navbar-toggler" title="Mostrar u ocultar navegación" @onclick="ToggleNavMenu">
+        <span class="oi oi-menu" aria-hidden="true"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass">
+    <p class="nav-caption">MENÚ PRINCIPAL</p>
+    <nav class="flex-column" aria-label="Navegación principal">
+        <div class="nav-item">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-calendar" aria-hidden="true"></span>
+                <span>Explorar eventos</span>
+            </NavLink>
+        </div>
+    </nav>
+
+    <aside class="sidebar-note">
+        <span class="sidebar-note-icon" aria-hidden="true">✦</span>
+        <p>Buenos momentos<br />comienzan aquí.</p>
+        <span class="sidebar-note-caption">Tu próxima experiencia te espera</span>
+    </aside>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

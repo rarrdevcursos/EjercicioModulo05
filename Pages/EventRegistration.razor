@@ -1,0 +1,111 @@
+@page "/events/{EventId:int}/register"
+@using admEventEase.Models
+@using admEventEase.Services
+@inject EventRegistrationStore RegistrationStore
+@inject UserSessionState SessionState
+
+<PageTitle>@(EventItem is null ? "Evento no encontrado" : $"Registro | {EventItem.Name}")</PageTitle>
+
+@if (EventItem is null)
+{
+    <section class="event-details">
+        <p class="eyebrow">Error 404</p>
+        <h1>Evento no encontrado</h1>
+        <p>No encontramos un evento con ese identificador.</p>
+        <a class="btn btn-primary" href="/">Volver a los eventos</a>
+    </section>
+}
+else if (SessionState.CurrentRegistration is { } currentRegistration
+    && currentRegistration.EventId == EventItem.Id)
+{
+    <section class="registration-page">
+        <p class="eyebrow">Registro confirmado</p>
+        <h1>¡Te esperamos, @currentRegistration.Name!</h1>
+        <p class="registration-event-name">@EventItem.Name</p>
+        <p>@EventItem.Date.ToString("dd/MM/yyyy · HH:mm") · @EventItem.Location</p>
+        <p>Tu registro quedó asociado a <strong>@currentRegistration.Email</strong>.</p>
+        <a class="btn btn-primary" href="@($"/events/{EventItem.Id}")">Ver evento y asistencia</a>
+    </section>
+}
+else
+{
+    <section class="registration-page">
+        <p class="eyebrow">Reserva tu lugar</p>
+        <h1>Regístrate al evento</h1>
+        <p class="registration-event-name">@EventItem.Name</p>
+        <p class="registration-event-meta">@EventItem.Date.ToString("dd/MM/yyyy · HH:mm") · @EventItem.Location</p>
+
+        <EditForm Model="@registrationModel" OnValidSubmit="Register">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            @if (!string.IsNullOrWhiteSpace(errorMessage))
+            {
+                <p class="registration-error" role="alert">@errorMessage</p>
+            }
+
+            <div class="registration-field">
+                <label for="attendee-name">Nombre completo</label>
+                <InputText id="attendee-name"
+                           class="form-control"
+                           @bind-Value="registrationModel.Name"
+                           autocomplete="name"
+                           maxlength="80" />
+                <ValidationMessage For="@(() => registrationModel.Name)" />
+            </div>
+
+            <div class="registration-field">
+                <label for="attendee-email">Correo electrónico</label>
+                <InputText id="attendee-email"
+                           class="form-control"
+                           @bind-Value="registrationModel.Email"
+                           type="email"
+                           autocomplete="email"
+                           maxlength="254" />
+                <ValidationMessage For="@(() => registrationModel.Email)" />
+            </div>
+
+            <button class="btn btn-primary registration-submit" type="submit">Confirmar registro</button>
+        </EditForm>
+    </section>
+}
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private EventItem? EventItem { get; set; }
+
+    private EventRegistrationModel registrationModel = new();
+
+    private string? errorMessage;
+
+    protected override void OnParametersSet()
+    {
+        EventItem = EventCatalog.FindById(EventId);
+        registrationModel = new EventRegistrationModel();
+        errorMessage = null;
+    }
+
+    private void Register()
+    {
+        if (EventItem is null)
+        {
+            errorMessage = "No se pudo encontrar el evento. Vuelve al catálogo e inténtalo de nuevo.";
+            return;
+        }
+
+        var result = RegistrationStore.TryRegister(EventItem.Id, registrationModel, out var registration);
+        if (result == RegistrationResult.Created && registration is not null)
+        {
+            SessionState.SetRegistration(registration);
+            return;
+        }
+
+        errorMessage = result switch
+        {
+            RegistrationResult.AlreadyRegistered => "Este correo ya está registrado para el evento.",
+            _ => "No se pudo completar el registro. Revisa tus datos e inténtalo nuevamente."
+        };
+    }
+}

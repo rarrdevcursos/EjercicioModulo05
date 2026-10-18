@@ -1,0 +1,78 @@
+@page "/events/{EventId:int}"
+@using admEventEase.Models
+@using admEventEase.Services
+@inject EventRegistrationStore RegistrationStore
+@inject UserSessionState SessionState
+
+<PageTitle>@(EventItem is null ? "Evento no encontrado" : $"{EventItem.Name} | EventEase")</PageTitle>
+
+@if (EventItem is null)
+{
+    <h1>Evento no encontrado</h1>
+    <p>No encontramos un evento con ese identificador.</p>
+    <a href="/">Volver a los eventos</a>
+}
+else
+{
+    <article class="event-details">
+        <p class="eyebrow">Detalles del evento</p>
+        <h1>@EventItem.Name</h1>
+        <dl>
+            <dt>Fecha</dt>
+            <dd>@EventItem.Date.ToString("dd/MM/yyyy · HH:mm")</dd>
+            <dt>Ubicación</dt>
+            <dd>@EventItem.Location</dd>
+        </dl>
+        <p>@EventItem.Description</p>
+        <div class="attendance-summary" role="status">
+            <span class="attendance-icon" aria-hidden="true">✓</span>
+            <span><strong>@RegistrationStore.GetAttendanceCount(EventItem.Id)</strong> asistentes confirmados</span>
+        </div>
+        <div class="event-details-actions">
+            @if (SessionState.CurrentRegistration is { } registration
+                && registration.EventId == EventItem.Id)
+            {
+                @if (registration.HasAttended)
+                {
+                    <p class="attendance-confirmed" role="status">Tu asistencia está confirmada. ¡Gracias por acompañarnos!</p>
+                }
+                else
+                {
+                    <button class="btn btn-primary" @onclick="ConfirmAttendance">Confirmar mi asistencia</button>
+                }
+            }
+            else
+            {
+                <a class="btn btn-primary" href="@($"/events/{EventItem.Id}/register")">Registrarme</a>
+            }
+            <a href="/">Volver a los eventos</a>
+        </div>
+    </article>
+}
+
+@code {
+    [Parameter]
+    public int EventId { get; set; }
+
+    private EventItem? EventItem { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        EventItem = EventCatalog.FindById(EventId);
+    }
+
+    private void ConfirmAttendance()
+    {
+        if (EventItem is null || SessionState.CurrentRegistration is not { } registration
+            || registration.EventId != EventItem.Id)
+        {
+            return;
+        }
+
+        if (RegistrationStore.MarkAttendance(EventItem.Id, registration.Email))
+        {
+            registration.HasAttended = true;
+            SessionState.NotifyChanged();
+        }
+    }
+}

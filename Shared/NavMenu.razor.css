@@ -1,0 +1,148 @@
+.brand-row {
+    height: 5.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    color: #fff;
+    font-size: 1.35rem;
+    font-weight: 750;
+    letter-spacing: -0.06em;
+    text-decoration: none;
+}
+
+.brand:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.brand-mark {
+    width: 2rem;
+    height: 2rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    background: #f0785e;
+    color: #201e35;
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-style: italic;
+}
+
+.brand-accent {
+    color: #f0785e;
+}
+
+.navbar-toggler {
+    display: none;
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.55rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+}
+
+.nav-caption {
+    margin: 2rem 1.5rem 0.75rem;
+    color: #87849c;
+    font-size: 0.68rem;
+    font-weight: 750;
+    letter-spacing: 0.13em;
+}
+
+.nav-item {
+    padding: 0 1rem;
+}
+
+.nav-item ::deep .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    min-height: 3.25rem;
+    padding: 0 1rem;
+    border-radius: 0.7rem;
+    color: #c6c4d2;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 160ms ease, color 160ms ease;
+}
+
+.nav-item ::deep .nav-link .oi {
+    width: 1.15rem;
+    color: #aaa6c0;
+    font-size: 1rem;
+}
+
+.nav-item ::deep .nav-link.active,
+.nav-item ::deep .nav-link:hover {
+    background: rgba(240, 120, 94, 0.14);
+    color: #fff;
+}
+
+.nav-item ::deep .nav-link.active .oi,
+.nav-item ::deep .nav-link:hover .oi {
+    color: #f0785e;
+}
+
+.sidebar-note {
+    margin: 3rem 1.25rem 0;
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.9rem;
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.sidebar-note-icon {
+    color: #f0785e;
+    font-size: 1.2rem;
+}
+
+.sidebar-note p {
+    margin: 0.75rem 0 0.5rem;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.sidebar-note-caption {
+    color: #aaa7ba;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 640.98px) {
+    .brand-row {
+        height: 4.5rem;
+    }
+
+    .navbar-toggler {
+        display: inline-grid;
+        place-items: center;
+    }
+
+    .collapse {
+        display: none;
+    }
+
+    .nav-caption {
+        margin-top: 1rem;
+    }
+
+    .sidebar-note {
+        display: none;
+    }
+}
+
+@media (min-width: 641px) {
+    .collapse {
+        display: block;
+    }
+}

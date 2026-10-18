@@ -1,0 +1,46 @@
+﻿@inherits LayoutComponentBase
+@implements IDisposable
+@inject UserSessionState SessionState
+
+<PageTitle>EventEase</PageTitle>
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            @if (SessionState.CurrentRegistration is { } registration)
+            {
+                <span class="topbar-label">Hola, @registration.Name · Sesión activa</span>
+            }
+            else
+            {
+                <span class="topbar-label">Tu agenda, llena de experiencias</span>
+            }
+            <a class="topbar-action" href="/">Descubrir eventos <span aria-hidden="true">↗</span></a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        SessionState.Changed += HandleSessionChanged;
+    }
+
+    private void HandleSessionChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        SessionState.Changed -= HandleSessionChanged;
+    }
+}

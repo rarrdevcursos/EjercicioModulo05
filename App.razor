@@ -1,0 +1,17 @@
+﻿<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>EventEase | Página no encontrada</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <section class="event-details route-not-found">
+                <p class="eyebrow">Error 404</p>
+                <h1>Página no encontrada</h1>
+                <p role="alert">La dirección que intentas abrir no existe o ya no está disponible.</p>
+                <a class="btn btn-primary" href="/">Volver a los eventos</a>
+            </section>
+        </LayoutView>
+    </NotFound>
+</Router>

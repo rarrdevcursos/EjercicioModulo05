@@ -1,0 +1,95 @@
+@page "/"
+@using admEventEase.Components
+@using admEventEase.Models
+
+<PageTitle>Eventos | EventEase</PageTitle>
+
+<section class="events-page">
+    <header class="events-header">
+        <div class="hero-copy">
+            <p class="eyebrow"><span class="eyebrow-dot"></span> EXPERIENCIAS PARA RECORDAR</p>
+            <h1>Momentos que<br /><span>conectan.</span></h1>
+            <p class="hero-description">Encuentra tu próximo gran encuentro. Explora eventos únicos, conoce los detalles y reserva tu lugar.</p>
+            <a class="hero-link" href="#eventos">Explorar eventos <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+            <div class="hero-orbit hero-orbit-one"></div>
+            <div class="hero-orbit hero-orbit-two"></div>
+            <div class="hero-sparkle sparkle-one">✳</div>
+            <div class="hero-sparkle sparkle-two">✦</div>
+            <div class="hero-ticket">
+                <span class="ticket-kicker">SAVE YOUR SPOT</span>
+                <span class="ticket-symbol">✳</span>
+                <span class="ticket-word">GOOD<br />TIMES</span>
+                <span class="ticket-footer">EVENTEASE · 2026</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="events-list" id="eventos">
+        <div class="section-heading">
+            <div>
+                <p class="eyebrow">HECHOS PARA COMPARTIR</p>
+                <h2>Próximos eventos</h2>
+            </div>
+            <span class="event-count">@EventCatalog.Events.Count @(EventCatalog.Events.Count == 1 ? "experiencia" : "experiencias")</span>
+        </div>
+
+        @if (EventCatalog.Events.Count == 0)
+        {
+            <p class="events-empty" role="status">No hay eventos válidos disponibles en este momento.</p>
+        }
+        else
+        {
+            <div class="event-grid">
+                @foreach (var eventItem in VisibleEvents)
+                {
+                    <EventCard @key="eventItem.Id" Event="eventItem" />
+                }
+            </div>
+
+            @if (PageCount > 1)
+            {
+                <nav class="event-pagination" aria-label="Paginación de eventos">
+                    <button class="pagination-button"
+                            @onclick="PreviousPage"
+                            disabled="@(currentPage == 1)">
+                        Anterior
+                    </button>
+                    <span class="pagination-status" role="status">Página @currentPage de @PageCount</span>
+                    <button class="pagination-button"
+                            @onclick="NextPage"
+                            disabled="@(currentPage == PageCount)">
+                        Siguiente
+                    </button>
+                </nav>
+            }
+        }
+    </section>
+</section>
+
+@code {
+    private const int PageSize = 9;
+    private int currentPage = 1;
+
+    private int PageCount => (EventCatalog.Events.Count + PageSize - 1) / PageSize;
+
+    private IEnumerable<EventItem> VisibleEvents =>
+        EventCatalog.Events.Skip((currentPage - 1) * PageSize).Take(PageSize);
+
+    private void PreviousPage()
+    {
+        if (currentPage > 1)
+        {
+            currentPage--;
+        }
+    }
+
+    private void NextPage()
+    {
+        if (currentPage < PageCount)
+        {
+            currentPage++;
+        }
+    }
+}
